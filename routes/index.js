@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { postRegister } = require("../controllers"); // Deconstructuring multiple lines
 
 /* GET home page. */
 router.get('/', (req, res, next) => {
@@ -12,9 +13,7 @@ router.get("/register", (req, res, next) => {
 });
 
 /* POST /register page. */
-router.post("/register", (req, res, next) => {
-    res.send("POST Register");
-});
+router.post("/register", postRegister);
 
 /* GET /login page. */
 router.get("/login", (req, res, next) => {
