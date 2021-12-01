@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const passport = require("passport");
+const { errorHandler } = require("../middleware");
 const { postRegister } = require("../controllers"); // Deconstructuring multiple lines
 
 /* GET home page. */
@@ -13,7 +15,7 @@ router.get("/register", (req, res, next) => {
 });
 
 /* POST /register page. */
-router.post("/register", postRegister);
+router.post("/register", errorHandler(postRegister));
 
 /* GET /login page. */
 router.get("/login", (req, res, next) => {
@@ -21,9 +23,10 @@ router.get("/login", (req, res, next) => {
 });
 
 /* POST /login page. */
-router.post("/login", (req, res, next) => {
-    res.send("POST Login");
-});
+router.post("/login", passport.authenticate('local', { 
+    successRedirect: "/", 
+    failureRedirect: "/login"
+}));
 
 /* GET /profile page. */
 router.get("/profile", (req, res, next) => {
@@ -58,6 +61,12 @@ router.get("/reset/:token", (req, res, next) => {
 /* PUT /reset page. */
 router.put("/reset/:token", (req, res, next) => {
     res.send("PUT /reset/:token");
+});
+
+/* GET /logout page. */
+router.get("/logout", (req, res, next) => {
+    req.logout();
+    res.redirect("/login");
 });
 
 module.exports = router;
