@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const passport = require("passport");
-const { errorHandler } = require("../middleware");
-const { postRegister, postLogin, postLogout } = require("../controllers"); // Deconstructuring multiple lines
+const { asyncErrorHandler } = require("../middleware");
+const { postRegister, postLogin, getLogout } = require("../controllers"); // Deconstructuring multiple lines
 
 /* GET home page. */
 router.get('/', (req, res, next) => {
@@ -15,7 +15,7 @@ router.get("/register", (req, res, next) => {
 });
 
 /* POST /register page. */
-router.post("/register", errorHandler(postRegister));
+router.post("/register", asyncErrorHandler(postRegister));
 
 /* GET /login page. */
 router.get("/login", (req, res, next) => {
@@ -23,7 +23,10 @@ router.get("/login", (req, res, next) => {
 });
 
 /* POST /login page. */
-router.post("/login", errorHandler(postLogin));
+router.post("/login", asyncErrorHandler(postLogin));
+
+/* GET /logout page. */
+router.get("/logout", getLogout);
 
 /* GET /profile page. */
 router.get("/profile", (req, res, next) => {
@@ -59,8 +62,5 @@ router.get("/reset/:token", (req, res, next) => {
 router.put("/reset/:token", (req, res, next) => {
     res.send("PUT /reset/:token");
 });
-
-/* GET /logout page. */
-router.get("/logout", postLogout);
 
 module.exports = router;

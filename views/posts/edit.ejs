@@ -1,0 +1,19 @@
+<h1>Edit Post</h1>
+
+<!-- Override POST method to PUT method -->
+<form action="/posts/<%= post.id %>?_method=PUT" method="POST">
+    <div>
+        <input name="post[title]" type="text" placeholder="Title" value="<%= post.title %>">
+    </div>
+    <div>
+        <textarea name="post[description]" placeholder="Description"><%= post.description %></textarea>
+    </div>
+    <div>
+        <input name="post[price]" type="text" placeholder="Price" value="<%= post.price %>">
+    </div>
+    <div>
+        <input name="post[location]" type="text" placeholder="Location" value="<%= post.location %>">
+    </div>
+
+    <input type="submit">
+</form>

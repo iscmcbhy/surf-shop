@@ -21,7 +21,7 @@ module.exports = {
         })(req, res, next);
     },
 
-    postLogout(req, res, next) {
+    getLogout(req, res, next) {
         req.logout();
         res.redirect("/login");
     }
