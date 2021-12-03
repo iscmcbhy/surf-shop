@@ -1,7 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const { asyncErrorHandler } = require("../middleware");
+const multer = require("multer");
+const upload = multer({"dest": "uploads/"});
 
+// const storage = multer.diskStorage({
+//     destination: function(req, file, cb) {
+//         cb(null, './uploads/');
+//     },
+//     filename: function(req, file, cb) {
+//         const ext = file.mimetype.split("/")[1];
+//         cb(null, Date.now() + "." + ext);
+//     }
+// });
+
+// const upload = multer({storage: storage});
+
+const { asyncErrorHandler } = require("../middleware");
 const { 
     postIndex, 
     postNew,
@@ -19,7 +33,7 @@ router.get('/', asyncErrorHandler(postIndex));
 router.get('/new', postNew);
 
 /* POST posts create /posts/new */
-router.post('/', asyncErrorHandler(postCreate));
+router.post('/', upload.array("images", 4), asyncErrorHandler(postCreate));
 
 /* GET posts show /posts/:id */
 router.get('/:id', asyncErrorHandler(postShow));

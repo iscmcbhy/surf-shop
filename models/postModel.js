@@ -5,7 +5,12 @@ const PostSchema = new Schema({
     title: String,
     description: String,
     price: String,
-    image: [ String ],
+    images: [ 
+        {
+            url: String, 
+            public_id: String
+        } 
+    ],
     location: String,
     lat: Number,
     long: Number,

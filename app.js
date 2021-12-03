@@ -1,5 +1,6 @@
 const createError = require('http-errors');
 const express = require('express');
+const dotenv = require("dotenv");
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
@@ -13,9 +14,11 @@ const indexRouter = require('./routes/index');
 const postsRouter = require("./routes/postsRoute");
 const reviewsRouter = require("./routes/reviews");
 
-const User = require('./models/user');
+const User = require('./models/userModel');
 
 const app = express();
+
+dotenv.config();
 
 // connect to datebase
 main().catch(err => console.log(err));
