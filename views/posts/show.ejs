@@ -3,7 +3,7 @@
 <div>Price: <%= post.price %></div>
 <div>Location: <%= post.location %></div>
 <% post.images.forEach(images => { %>
-    <div><img src="<%= images.url %>" alt="Surf Board Image"></div>
+    <div><img src="<%= images.url %>" alt="Surf Board Image" width="100px"></div>
 <% }); %>
 <div>
     <a href="/posts/<%= post.id %>/edit">
