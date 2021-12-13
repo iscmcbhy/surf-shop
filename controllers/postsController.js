@@ -1,11 +1,13 @@
 const Post = require("../models/postModel");
 const cloudinary = require("cloudinary");
-
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_SECRET
 });
+
+const mapboxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
+const geocodingClient = mapboxGeocoding({ accessToken: process.env.MAPBOX_ACCESS_TOKEN });
 
 module.exports = {
     async postIndex(req, res, next){
@@ -32,6 +34,15 @@ module.exports = {
 
             req.body.post.images.push(imageObj);
         }
+
+        let response = await geocodingClient
+            .forwardGeocode({
+                query: req.body.post.location,
+                limit: 1
+            })
+            .send();
+        
+        req.body.post.coordinates = response.body.features[0].geometry.coordinates;
 
         await Post.create(req.body.post);
         
@@ -87,11 +98,25 @@ module.exports = {
             }
         }
 
+        console.log(post.location);
+        console.log(req.body.post.location);
+
+        if(post.location !== req.body.post.location){
+            let response = await geocodingClient
+            .forwardGeocode({
+                query: req.body.post.location,
+                limit: 1
+            })
+            .send();
+
+            post.coordinates = response.body.features[0].geometry.coordinates;
+            post.location = req.body.post.location;
+        }
+
         // update other fields
         post.title = req.body.post.title;
         post.description = req.body.post.description;
         post.price = req.body.post.price;
-        post.location = req.body.post.location;
 
         // save to mongodb
         await post.save();

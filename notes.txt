@@ -1,0 +1,10 @@
+- Geocoding Post Address and Adding marker to the mapbox
+
+## Update Post Model
+> Remove lat and long, add coordinates (Array)
+
+## Update Posts Controller
+> Add the geocodingClient requirement to the top of the file.
+
+> Update create (POST) method.
+

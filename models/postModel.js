@@ -12,8 +12,7 @@ const PostSchema = new Schema({
         } 
     ],
     location: String,
-    lat: Number,
-    long: Number,
+    coordinates: Array,
     author: {
         type: Schema.Types.ObjectId,
         ref: "User"

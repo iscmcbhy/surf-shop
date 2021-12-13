@@ -23,13 +23,16 @@ const app = express();
 main().catch(err => console.log(err));
 
 async function main() {
-  await mongoose.connect('mongodb://localhost:27017/surf-shop');
-  console.log("MongoDB Connected");
+    await mongoose.connect(process.env.MONGODB_MAPBOX);
+    console.log("MongoDB Connected");
 }
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+// set statics
+app.use(express.static("public"));
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -63,18 +66,18 @@ app.use("/posts/:id/reviews", reviewsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  next(createError(404));
+    next(createError(404));
 });
 
 // error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
 });
 
 module.exports = app;
