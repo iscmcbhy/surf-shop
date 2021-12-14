@@ -13,7 +13,7 @@ module.exports = {
     async postIndex(req, res, next){
         let posts = await Post.find({});
 
-        res.render("posts/index", {posts});
+        res.render("posts/index", {posts, title: "Surf Shop - Posts"});
     },
 
     postNew(req, res, next){
@@ -46,6 +46,7 @@ module.exports = {
 
         await Post.create(req.body.post);
         
+        req.session.success = "Post Created Successfully!"
         res.redirect(`/posts`);
     },
 
@@ -97,9 +98,6 @@ module.exports = {
                 post.images.push(imageObj);
             }
         }
-
-        console.log(post.location);
-        console.log(req.body.post.location);
 
         if(post.location !== req.body.post.location){
             let response = await geocodingClient
