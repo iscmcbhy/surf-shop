@@ -1,4 +1,5 @@
 const Post = require("../models/postModel");
+const Review = require("../models/reviewModel");
 const cloudinary = require("cloudinary");
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_NAME,
@@ -43,7 +44,9 @@ module.exports = {
             .send();
         
         req.body.post.coordinates = response.body.features[0].geometry.coordinates;
-
+        
+        // Add author
+        req.body.post.author = req.user._id;
         await Post.create(req.body.post);
         
         req.session.success = "Post Created Successfully!"
@@ -51,7 +54,17 @@ module.exports = {
     },
 
     async postShow(req, res, next){
-        let post = await Post.findById(req.params.id);
+        let post = await Post.findById(req.params.id).populate({
+            path: "reviews",
+            options: {
+                sort: { _id: -1 }
+            },
+            populate: {
+                path: "author",
+                model: "User"
+            }
+        });
+        
         res.render("posts/show", { post });
     },
 

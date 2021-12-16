@@ -14,7 +14,7 @@ const methodOverride = require("method-override");
 // Require Routes
 const indexRouter = require('./routes/index');
 const postsRouter = require("./routes/postsRoute");
-const reviewsRouter = require("./routes/reviews");
+const reviewsRouter = require("./routes/reviewsRoute");
 
 const User = require('./models/userModel');
 
@@ -24,7 +24,7 @@ const app = express();
 main().catch(err => console.log(err));
 
 async function main() {
-    await mongoose.connect(process.env.MONGODB_MAPBOX);
+    await mongoose.connect(process.env.MONGODB_DEV);
     console.log("MongoDB Connected");
 }
 
@@ -63,10 +63,19 @@ passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-// title middleware
+// local variable middleware
 app.use((req, res, next)=> {
+    // set user
+    req.user = {
+        _id: "61b856dbc746f384e1236dfc",
+        username: "testUser"
+    };
+    res.locals.currentUser = req.user;
+
+    // Set default Title
     res.locals.title = "Surf Shop";
 
+    // Success and error sessions
     res.locals.success = req.session.success || "";
     delete req.session.success
 
@@ -97,7 +106,6 @@ app.use(function(err, req, res, next) {
     // res.render('error');
 
     console.log(err);
-
     req.session.error = err.message;
     res.redirect("back");
 });
