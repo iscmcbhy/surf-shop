@@ -63,4 +63,8 @@ router.put("/reset/:token", (req, res, next) => {
     res.send("PUT /reset/:token");
 });
 
+router.get("/test", (req, res, next) => {
+    res.render("starability", { title: 'Surf Shop - Home' });
+});
+
 module.exports = router;

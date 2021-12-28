@@ -21,36 +21,43 @@
     </form>
 </div>
 <hr>
+<h3>Create a Review</h3>
+<form action="/posts/<%= post.id %>/reviews" method="POST">
+    <div>Body: <textarea name="review[body]"></textarea></div>
+    <!-- <div>Rating: <input name="review[rating]" type="number" min="1" max="5" step="1" required /></div> -->
+    <% include ../partials/star-rating.ejs %>
+    <div><input type="submit" /></div>
+</form>
+<!-- Display All Reviews <p class="starability-result" data-rating=""> </p>  -->
 <h2>Reviews</h2>
 <div>
     <% if(post.reviews && post.reviews != 0)
         for(const review of post.reviews) { %>
     ---------------------------------------------
     <div>Body: <%= review.body %></div>
-    <div>Rating: <%= review.rating %></div>
-    <div>Author: <%= review.author.username %></div>
-    <div>
-        <button class="toggle-edit-form">Edit</button>
-        <form action="/posts/<%= post.id %>/reviews/<%= review._id %>?_method=PUT" method="POST" class="edit-review-form">
-            >
-            <div>Body: <textarea name="review[body]"><%= review.body %></textarea></div>
-            <div>Rating: <input name="review[rating]" type="number" min="1" max="5" step="1" required value="<%= review.rating %>"/></div>
-            <div><input type="submit" value="Update"/></div>
-        </form>
+    <div>Rated: <%= review.rating %> stars
+        
     </div>
-    <form action="/posts/<%= post.id %>/reviews/<%= review._id %>?_method=DELETE" method="POST">
-        <button type="submit">Remove Review</button>
-    </form>
+    <div>Author: <%= review.author.username %></div>
+        <% if(review.author.equals(currentUser._id)) { %>
+        <div>
+            <button class="toggle-edit-form">Edit</button>
+            <form action="/posts/<%= post.id %>/reviews/<%= review._id %>?_method=PUT" method="POST" class="edit-review-form">
+                -->
+                <div>Body: <textarea name="review[body]"><%= review.body %></textarea></div>
+                
+                <% include ../partials/edit-form-starability.ejs %>
+                <div><input type="submit" value="Update"/></div>
+            </form>
+        </div>
+        <script>$('#toggle-edit-rate<%= review.rating %>').prop('checked', true);</script>
+        <form action="/posts/<%= post.id %>/reviews/<%= review._id %>?_method=DELETE" method="POST">
+            <button type="submit">Remove Review</button>
+        </form>
+        <% } %>
     <% } %> 
 </div>
 <hr>
-<h3>Create a Review</h3>
-<form action="/posts/<%= post.id %>/reviews" method="POST">
-    <div>Body: <textarea name="review[body]"></textarea></div>
-    <div>Rating: <input name="review[rating]" type="number" min="1" max="5" step="1" required /></div>
-    <div><input type="submit" /></div>
-</form>
-<!-- Display All Reviews -->
 
 <script>
     let post = <%- JSON.stringify(post) %>;

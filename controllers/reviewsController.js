@@ -5,7 +5,24 @@ module.exports = {
 
     async reviewCreate(req, res, next){
         // find the post by its ID
-        let post = await Post.findById(req.params.id);
+        let post = await Post.findById(req.params.id).populate("reviews").exec();
+        
+        // checks if the author is reviewed before
+        let userReviewed = false;
+        
+        await post.reviews.filter(review => {
+            if(review.author.equals(req.user._id)){
+                userReviewed = true;
+            }
+           return;
+        });
+        
+        if(userReviewed){
+            req.session.error = "You already reviewed this post!";
+
+            return res.redirect(`/posts/${post.id}`)
+        }
+
         // Create the review
         req.body.review.author = req.user._id;
         let review = await Review.create(req.body.review);
@@ -29,7 +46,13 @@ module.exports = {
     },
 
     async reviewDelete(req, res, next){
+        // Update the Post first
+        await Post.findByIdAndUpdate(req.params.id, {
+            $pull : {reviews: req.params.review_id }
+        });
+        // Remove the Review
         await Review.findByIdAndDelete(req.params.review_id);
+
         req.session.success = "Review Removed!";
         res.redirect(`/posts/${req.params.id}`);
     }

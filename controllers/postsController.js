@@ -12,7 +12,11 @@ const geocodingClient = mapboxGeocoding({ accessToken: process.env.MAPBOX_ACCESS
 
 module.exports = {
     async postIndex(req, res, next){
-        let posts = await Post.find({});
+        // Modified from .find to .paginate
+        let posts = await Post.paginate({}, {
+            page: req.query.page || 1,
+            limit: 10
+        });
 
         res.render("posts/index", {posts, title: "Surf Shop - Posts"});
     },
@@ -152,6 +156,8 @@ module.exports = {
         // Remove from MongoDB
         await post.remove();
 
+        // Redirect
+        req.session.success = "Post deleted successfully!";
         res.redirect("/posts/");
     }
 };

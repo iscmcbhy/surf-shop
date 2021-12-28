@@ -1,7 +1,7 @@
 <% layout("layouts/boilerplate.ejs"); -%>
 <h1>Posts Index</h1>
 
-<% posts.forEach((post) => { %>
+<% posts.docs.forEach((post) => { %>
     <div>
         <h3>Title: <%= post.title %></h3>
         <div>Description: <%= post.description %></div>

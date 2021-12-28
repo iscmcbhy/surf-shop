@@ -49,3 +49,8 @@ new mapboxgl.Marker(el)
             `<h3>${post.title}</h3><p>${post.location}</p>`
         )
     );
+
+
+$(".clear-rating").on("click", function(){
+    $("#no-rate-toggle-edit").click();
+});
