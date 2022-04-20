@@ -68,8 +68,10 @@ module.exports = {
                 model: "User"
             }
         });
+
+        const floorRating = post.calculateAverageRating();
         
-        res.render("posts/show", { post });
+        res.render("posts/show", { post, floorRating });
     },
 
     async postEdit(req, res, next){

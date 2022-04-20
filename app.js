@@ -10,9 +10,9 @@ const passport = require("passport");
 const session = require("express-session");
 const mongoose = require("mongoose");
 const methodOverride = require("method-override");
-const { seedPosts } = require("./seed");
+// const { seedPosts } = require("./seed");
 
-seedPosts();
+// seedPosts();
 
 // Require Routes
 const indexRouter = require('./routes/index');
@@ -70,8 +70,8 @@ passport.deserializeUser(User.deserializeUser());
 app.use((req, res, next)=> {
     // set user
     req.user = {
-        _id: "61b856dbc746f384e1236dfc",
-        username: "testUser"
+        _id: "6215d791ea6edfac7c5ce5d1",
+        username: "test1"
     };
     res.locals.currentUser = req.user;
 
