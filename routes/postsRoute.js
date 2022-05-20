@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
+
+const { storage } = require('../cloudinary');
+
 const multer = require("multer");
-const upload = multer({"dest": "uploads/"});
 
 // const storage = multer.diskStorage({
 //     destination: function(req, file, cb) {
@@ -13,7 +15,7 @@ const upload = multer({"dest": "uploads/"});
 //     }
 // });
 
-// const upload = multer({storage: storage});
+const upload = multer({storage});
 
 const { asyncErrorHandler } = require("../middleware");
 const { 

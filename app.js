@@ -93,11 +93,6 @@ app.use('/', indexRouter);
 app.use("/posts", postsRouter);
 app.use("/posts/:id/reviews", reviewsRouter);
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-    next(createError(404));
-});
-
 // error handler
 app.use(function(err, req, res, next) {
     // // set locals, only providing error in development
@@ -111,6 +106,10 @@ app.use(function(err, req, res, next) {
     console.log(err);
     req.session.error = err.message;
     res.redirect("back");
+});
+
+app.listen(3000, ()=>{
+    console.log("Server running on port: http://localhost:" + 3000);
 });
 
 module.exports = app;

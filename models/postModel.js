@@ -14,7 +14,20 @@ const PostSchema = new Schema({
         } 
     ],
     location: String,
-    coordinates: Array,
+    geometry: {
+        type: {
+            type: String,
+            enum: ["Point"],
+            required: true
+        },
+        coordinates: {
+            type: [Number],
+            required: true
+        }
+    },
+	properties: {
+		description: String
+	},
     author: {
         type: Schema.Types.ObjectId,
         ref: "User"
@@ -51,7 +64,7 @@ PostSchema.methods.calculateAverageRating = function (){
         this.avgRating = totalRatings;
     }
 
-    const  floorRating = Math.floor(this.avgRating);
+    const floorRating = Math.floor(this.avgRating);
     
     this.save();
 

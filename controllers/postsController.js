@@ -1,24 +1,34 @@
 const Post = require("../models/postModel");
 const Review = require("../models/reviewModel");
-const cloudinary = require("cloudinary");
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_SECRET
-});
+const { cloudinary } = require("../cloudinary");
+ 
+// const cloudinary = require("cloudinary");
+// cloudinary.config({
+//     cloud_name: process.env.CLOUDINARY_NAME,
+//     api_key: process.env.CLOUDINARY_API_KEY,
+//     api_secret: process.env.CLOUDINARY_SECRET
+// });
+
+const mapBoxToken = process.env.MAPBOX_ACCESS_TOKEN;
 
 const mapboxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
-const geocodingClient = mapboxGeocoding({ accessToken: process.env.MAPBOX_ACCESS_TOKEN });
+const geocodingClient = mapboxGeocoding({ accessToken: mapBoxToken });
 
 module.exports = {
     async postIndex(req, res, next){
         // Modified from .find to .paginate
         let posts = await Post.paginate({}, {
+            populate: {
+                path: "author",
+                model: "User"
+            },
             page: req.query.page || 1,
-            limit: 10
+            limit: 10,
+            //  or sort: '-_id'
+            sort: {'_id': -1}
         });
 
-        res.render("posts/index", {posts, title: "Surf Shop - Posts"});
+        res.render("posts/index", { posts, mapBoxToken, title: "Surf Shop - Posts" });
     },
 
     postNew(req, res, next){
@@ -26,19 +36,22 @@ module.exports = {
     },
 
     async postCreate(req, res, next){
+        console.log("file");
         req.body.post.images = [];
         
         for(file of req.files){
             let imageObj = {};
-            let image = await cloudinary.v2.uploader.upload(file.path);
 
             imageObj = {
-                url: image.secure_url,
-                public_id: image.public_id
+                url: file.secure_url,
+                public_id: file.public_id
             };
 
             req.body.post.images.push(imageObj);
+            
         }
+
+        
 
         let response = await geocodingClient
             .forwardGeocode({
@@ -47,14 +60,27 @@ module.exports = {
             })
             .send();
         
-        req.body.post.coordinates = response.body.features[0].geometry.coordinates;
+        req.body.post.geometry = response.body.features[0].geometry;
         
         // Add author
         req.body.post.author = req.user._id;
-        await Post.create(req.body.post);
+        let newPost = await Post(req.body.post);
+
+        newPost.properties.description = `
+            <strong>
+                <a href="/posts/${newPost._id}">${newPost.title}</a>
+            </strong>
+            <p>
+                ${newPost.location}
+            </p>
+            <p>${newPost.description.substring(0, 20)}...
+            </p>
+        `;
+
+        await newPost.save();
         
         req.session.success = "Post Created Successfully!"
-        res.redirect(`/posts`);
+        res.redirect(`/posts/${newPost._id}`);
     },
 
     async postShow(req, res, next){
@@ -71,7 +97,7 @@ module.exports = {
 
         const floorRating = post.calculateAverageRating();
         
-        res.render("posts/show", { post, floorRating });
+        res.render("posts/show", { post, mapBoxToken, floorRating });
     },
 
     async postEdit(req, res, next){
@@ -107,11 +133,10 @@ module.exports = {
             // Upload File
             for(file of req.files){
                 let imageObj = {};
-                let image = await cloudinary.v2.uploader.upload(file.path);
     
                 imageObj = {
-                    url: image.secure_url,
-                    public_id: image.public_id
+                    url: file.secure_url,
+                    public_id: file.public_id
                 };
                 
                 post.images.push(imageObj);
@@ -126,14 +151,27 @@ module.exports = {
             })
             .send();
 
-            post.coordinates = response.body.features[0].geometry.coordinates;
+            post.geometry = response.body.features[0].geometry;
             post.location = req.body.post.location;
+
+            console.log(response.body.features[0].geometry);
         }
 
         // update other fields
         post.title = req.body.post.title;
         post.description = req.body.post.description;
         post.price = req.body.post.price;
+
+        post.properties.description = `
+            <strong>
+                <a href="/posts/${post._id}">${post.title}</a>
+            </strong>
+            <p>
+                ${post.location}
+            </p>
+            <p>${post.description.substring(0, 20)}...
+            </p>
+        `;
 
         // save to mongodb
         await post.save();

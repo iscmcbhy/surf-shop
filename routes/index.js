@@ -2,12 +2,10 @@ const express = require('express');
 const router = express.Router();
 const passport = require("passport");
 const { asyncErrorHandler } = require("../middleware");
-const { postRegister, postLogin, getLogout } = require("../controllers"); // Deconstructuring multiple lines
+const { postRegister, postLogin, getLogout, landingPage } = require("../controllers"); // Deconstructuring multiple lines
 
 /* GET home page. */
-router.get('/', (req, res, next) => {
-    res.render('index', { title: 'Surf Shop - Home' });
-});
+router.get('/', asyncErrorHandler(landingPage));
 
 /* GET /register page. */
 router.get("/register", (req, res, next) => {

@@ -5,6 +5,18 @@
 <div>Price: <%= post.price %></div>
 <div>Average Rating: <%=floorRating %></div>
 <div>Location: <%= post.location %></div>
+<div>
+    <% for(let i = 0; i< 5; i++) { %> 
+        <% if(i < floorRating) { %> 
+            <i class="fas fa-star fa-3x"></i>
+        <% } else if ((post.avgRating - i) > 0 && (post.avgRating - i ) < 1) { %>
+            <i class="fas fa-star-half-stroke fa-3x"></i>
+        <% } else { %> 
+            <i class="far fa-star fa-3x"></i>
+        <% } %> 
+
+    <% } %> 
+</div>
 <% post.images.forEach(images => { %>
     <div><img src="<%= images.url %>" alt="Surf Board Image" width="100px"></div>
 <% }); %>
@@ -62,5 +74,7 @@
 
 <script>
     let post = <%- JSON.stringify(post) %>;
+    let mapBoxToken = "<%= mapBoxToken %>";
 </script>
+
 <script src="/javascripts/post-show.js"></script>

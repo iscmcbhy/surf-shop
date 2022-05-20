@@ -1,14 +1,14 @@
-mapboxgl.accessToken = 'pk.eyJ1IjoiY2hlZXplcSIsImEiOiJja3d6dThkbG0wMjVsMnZxbzJkNjMxazV3In0.MP4ZK40qD-C8-Ezarrs-rA';
+mapboxgl.accessToken = mapBoxToken;
     
-const map = new mapboxgl.Map({
+var map = new mapboxgl.Map({
     container: 'map-container',
     style: 'mapbox://styles/mapbox/light-v10',
-    center: post.coordinates,
+    center: post.geometry.coordinates,
     zoom: 5
 });
 
 // create a HTML element for each feature
-const el = document.createElement('div');
+var el = document.createElement('div');
 el.className = 'marker';
 
 // const toggleEditBtns = document.getElementsByClassName("toggle-edit-form");
@@ -41,7 +41,7 @@ $(".toggle-edit-form").on("click", function() {
 
 // make a marker for each feature and add to the map
 new mapboxgl.Marker(el)
-    .setLngLat(post.coordinates)
+    .setLngLat(post.geometry.coordinates)
     .addTo(map)
     .setPopup(
         new mapboxgl.Popup({ offset: 25 }) // add popups
