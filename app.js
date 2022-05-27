@@ -25,15 +25,6 @@ const User = require('./models/userModel');
 
 const app = express();
 
-// Sessions
-app.use(session({
-    secret: 'test-secret',
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false }
-})
-);
-
 // connect to datebase
 // main().catch(err => console.log(err));
 
@@ -42,6 +33,7 @@ app.use(session({
 //     console.log("MongoDB Connected");
 // }
 
+// useCreateIndex is deprecated on my version
 mongoose.connect('mongodb://localhost:27017/surf-shop', {
   useNewUrlParser: true
 });
@@ -70,7 +62,13 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(methodOverride("_method"));
 
-
+// Sessions
+app.use(session({
+  secret: 'test-secret',
+  resave: false,
+  saveUninitialized: true
+})
+);
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -122,12 +120,6 @@ app.use(function(err, req, res, next) {
     req.session.error = err.message;
     res.redirect("back");
 });
-
-app.use(function(req, res, next) {
-    const err = new Error('Not Found');
-    err.status = 404;
-    next(err);
-  });
 
 app.listen(3000, ()=>{
     console.log("Server running on port: http://localhost:" + 3000);
