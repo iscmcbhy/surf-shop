@@ -36,22 +36,19 @@ module.exports = {
     },
 
     async postCreate(req, res, next){
-        console.log("file");
         req.body.post.images = [];
         
         for(file of req.files){
             let imageObj = {};
 
             imageObj = {
-                url: file.secure_url,
-                public_id: file.public_id
+                url: file.path,
+                public_id: file.filename
             };
 
             req.body.post.images.push(imageObj);
             
         }
-
-        
 
         let response = await geocodingClient
             .forwardGeocode({
@@ -64,6 +61,7 @@ module.exports = {
         
         // Add author
         req.body.post.author = req.user._id;
+
         let newPost = await Post(req.body.post);
 
         newPost.properties.description = `
@@ -84,16 +82,22 @@ module.exports = {
     },
 
     async postShow(req, res, next){
-        let post = await Post.findById(req.params.id).populate({
-            path: "reviews",
-            options: {
-                sort: { _id: -1 }
+        let post = await Post.findById(req.params.id).populate([
+            {
+                path: "reviews",
+                options: {
+                    sort: { _id: -1 }
+                },
+                populate: {
+                    path: "author",
+                    model: "User"
+                }
             },
-            populate: {
+            {
                 path: "author",
                 model: "User"
             }
-        });
+        ]);
 
         const floorRating = post.calculateAverageRating();
         
@@ -106,8 +110,8 @@ module.exports = {
     },
     
     async postUpdate(req, res, next){
-        // Find post by Id.
-        let post = await Post.findById(req.params.id);
+        // get post from local variables
+        const { post } = res.locals;
 
         // Check if there's any image for deletion
         if(req.body.deleteImages && req.body.deleteImages.length){
@@ -117,7 +121,7 @@ module.exports = {
             // loop deleteImages
             for(const public_id of deleteImages){
                 // delete images from cloudinary
-                await cloudinary.v2.uploader.destroy(public_id);
+                await cloudinary.uploader.destroy(public_id);
                 // delete images from post.body
                 for(const image of post.images){
                     if(image.public_id === public_id){
@@ -153,8 +157,6 @@ module.exports = {
 
             post.geometry = response.body.features[0].geometry;
             post.location = req.body.post.location;
-
-            console.log(response.body.features[0].geometry);
         }
 
         // update other fields
@@ -177,11 +179,12 @@ module.exports = {
         await post.save();
 
         // redirect
+        res.session.success = "Post edited!";
         res.redirect(`/posts/${post.id}`);
     },
 
     async postDelete(req, res, next){
-        let post = await Post.findById(req.params.id);
+        const { post } =  res.locals;
 
         // Check if there is image
         if(post.images){
@@ -189,7 +192,7 @@ module.exports = {
             
             // Delete Image from cloudinary
             for(const image of images){
-                await cloudinary.v2.uploader.destroy(image.public_id);
+                await cloudinary.uploader.destroy(image.public_id);
             }
         }
 

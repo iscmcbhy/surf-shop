@@ -13,30 +13,75 @@ module.exports = {
         res.render("index", { posts, mapboxToken: MAPBOX_TOKEN, title: 'Surf Shop - Home' });
     },
 
+    // Get / Register
+    getRegister(req, res, next){
+        res.render('register', {title: "Register", username: "", email: ""});
+    },
+
     // Post /register
     async postRegister(req, res, next) {
-        const newUser = new User({
-            username: req.body.username,
-            email: req.body.email,
-            image: req.body.image
-        });
+        const newUser = new User(req.body);
 
-        await User.register(newUser, req.body.password);
-        
-        res.redirect('/');
+        try {
+            let user = await User.register(newUser, req.body.password);
+            req.login(user, function(err){
+                if(err) {
+                    return next(err);
+                }
+                req.session.success = "Welcome to Surf Shop, " + user.username;
+                res.redirect('/');
+            });
+        } catch (err) {
+            const { username, email } = req.body;
+            let error = err.message;
+
+            if (error.includes('duplicate') && error.includes('index: email_1 dup key')) {
+                error = 'A user with the given email is already registered';
+            }
+            res.render('register', { title: 'Register', username, email, error });
+        }
+    },
+
+    // Get /login
+    getLogin(req, res, next){
+        if(req.isAuthenticated()) {
+            return res.redirect('/');
+        }
+        if(req.query.returnTo)
+            req.session.redirectTo = req.headers.referer;
+
+        res.render('login', {title: "Login"});
     },
 
     // Post /login
-    postLogin(req, res, next) {
-        passport.authenticate('local', { 
-            successRedirect: "/", 
-            failureRedirect: "/login"
-        })(req, res, next);
+    async postLogin(req, res, next) {
+        const { username, password } = req.body;
+        const { user, error } = await User.authenticate()(username, password);
+        
+        if(!user && error ) 
+            return next(error);
+
+        req.login(user, function(err) {
+            if(err) 
+                return next(err);
+
+            req.session.success = `Welcome back, ${username}!`;
+            
+            const redirectUrl = req.session.redirectTo || '/';
+            delete req.session.redirectTo;
+            console.log(redirectUrl);
+            res.redirect(redirectUrl);
+        });
     },
 
     // Get /logout
     getLogout(req, res, next) {
-        req.logout();
-        res.redirect("/login");
+        req.logout((err)=> {
+            if(err){
+                return next(err);
+            }
+            res.redirect("/");
+        });
+        
     }
 };

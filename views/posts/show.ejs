@@ -5,6 +5,8 @@
 <div>Price: <%= post.price %></div>
 <div>Average Rating: <%=floorRating %></div>
 <div>Location: <%= post.location %></div>
+<div>Author: <%=post.author.username %></div>
+
 <div>
     <% for(let i = 0; i< 5; i++) { %> 
         <% if(i < floorRating) { %> 
@@ -20,9 +22,14 @@
 <% post.images.forEach(images => { %>
     <div><img src="<%= images.url %>" alt="Surf Board Image" width="100px"></div>
 <% }); %>
+
+<!-- MapBox Container -->
 <div id='map-container'>
 
 </div>
+
+<!-- Edit -->
+<% if(currentUser && post.author._id.equals(currentUser._id)) {  %> 
 <div>
     <a href="/posts/<%= post.id %>/edit">
         <button>Edit</button>
@@ -33,14 +40,25 @@
         <button type="submit">Delete</button>
     </form>
 </div>
+<% } %> 
+
+<!-- Review -->
+<% if(currentUser) { %> 
+    <hr>
+    <h3>Create a Review</h3>
+    <form action="/posts/<%= post.id %>/reviews" method="POST">
+        <div>Body: <textarea name="review[body]"></textarea></div>
+        <!-- <div>Rating: <input name="review[rating]" type="number" min="1" max="5" step="1" required /></div> -->
+        <%- include ('../partials/star-rating.ejs') %>
+        <div><input type="submit" /></div>
+    </form>
+    <hr>
+<% } else { %>
+    
+    <h3><a href="/login?returnTo=true">Create a Review</a></h3>
+
+<% }  %>  
 <hr>
-<h3>Create a Review</h3>
-<form action="/posts/<%= post.id %>/reviews" method="POST">
-    <div>Body: <textarea name="review[body]"></textarea></div>
-    <!-- <div>Rating: <input name="review[rating]" type="number" min="1" max="5" step="1" required /></div> -->
-    <% include ../partials/star-rating.ejs %>
-    <div><input type="submit" /></div>
-</form>
 <!-- Display All Reviews <p class="starability-result" data-rating=""> </p>  -->
 <h2>Reviews</h2>
 <div>
@@ -48,9 +66,12 @@
         for(const review of post.reviews) { %>
     ---------------------------------------------
     <div>Body: <%= review.body %></div>
+
+    // Review Star Rating
     <div>Rated: <%= review.rating %> stars
         
     </div>
+
     <div>Author: <%= review.author.username %></div>
         <% if(review.author.equals(currentUser._id)) { %>
         <div>
@@ -59,7 +80,7 @@
                 -->
                 <div>Body: <textarea name="review[body]"><%= review.body %></textarea></div>
                 
-                <% include ../partials/edit-form-starability.ejs %>
+                <%- include ('../partials/edit-form-starability.ejs') %>
                 <div><input type="submit" value="Update"/></div>
             </form>
         </div>
@@ -72,6 +93,7 @@
 </div>
 <hr>
 
+<!-- Scrypt -->
 <script>
     let post = <%- JSON.stringify(post) %>;
     let mapBoxToken = "<%= mapBoxToken %>";

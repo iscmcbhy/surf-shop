@@ -16,3 +16,14 @@ a {
   max-width: 400px;
   font: 12/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
 }
+
+.navbar {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar li {
+  display: inline;
+  padding: 5px;
+}

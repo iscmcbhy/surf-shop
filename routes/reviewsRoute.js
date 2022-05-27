@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
 
-const { asyncErrorHandler, isReviewAuthor } = require("../middleware");
+const { asyncErrorHandler, isReviewAuthor, isLoggedIn } = require("../middleware");
 const { 
     reviewCreate, 
     reviewUpdate,
@@ -9,7 +9,7 @@ const {
 } = require("../controllers/reviewsController");
 
 /* POST reviews create posts/:id/reviews/new */
-router.post('/', asyncErrorHandler(reviewCreate));
+router.post('/', isLoggedIn, asyncErrorHandler(reviewCreate));
 
 /* DELETE reviews destroy posts/:id/reviews/:review_id */
 router.delete('/:review_id', isReviewAuthor, asyncErrorHandler(reviewDelete));

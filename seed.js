@@ -1,6 +1,5 @@
 const faker = require("faker");
 const Post = require("./models/postModel");
-const paginate = require("mongoose-paginate");
 const Cities = require("./cities.js");
 
 async function seedPosts() {
@@ -17,7 +16,7 @@ async function seedPosts() {
 				type: 'Point',
 				coordinates: [Cities[random1000].longitude, Cities[random1000].latitude],
 			},
-			author: "6215d791ea6edfac7c5ce5d1",
+			author: "628c87359ed5bd40aa2619bf",
 			price: 1000
 		}
 		let post = new Post(postData);

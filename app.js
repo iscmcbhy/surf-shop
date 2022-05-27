@@ -10,6 +10,8 @@ const passport = require("passport");
 const session = require("express-session");
 const mongoose = require("mongoose");
 const methodOverride = require("method-override");
+const favicon = require('serve-favicon');
+
 // const { seedPosts } = require("./seed");
 
 // seedPosts();
@@ -23,13 +25,32 @@ const User = require('./models/userModel');
 
 const app = express();
 
-// connect to datebase
-main().catch(err => console.log(err));
+// Sessions
+app.use(session({
+    secret: 'test-secret',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }
+})
+);
 
-async function main() {
-    await mongoose.connect(process.env.MONGODB_DEV);
-    console.log("MongoDB Connected");
-}
+// connect to datebase
+// main().catch(err => console.log(err));
+
+// async function main() {
+//     await mongoose.connect(process.env.MONGODB_DEV, { useNewUrlParser: true });
+//     console.log("MongoDB Connected");
+// }
+
+mongoose.connect('mongodb://localhost:27017/surf-shop', {
+  useNewUrlParser: true
+});
+
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', () => {
+  console.log('we\'re connected!');
+});
 
 // Engine
 app.engine("ejs", engine);
@@ -41,6 +62,7 @@ app.set('view engine', 'ejs');
 // set statics
 app.use(express.static("public"));
 
+app.use(favicon(__dirname + '/public/images/icons/oemlogo.ico'));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -48,15 +70,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(methodOverride("_method"));
 
-// Sessions
-app.use(
-    session({
-        secret: 'test-secret',
-        resave: false,
-        saveUninitialized: true
-        // cookie: { secure: true }
-    })
-);
+
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -67,12 +81,13 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 // local variable middleware
-app.use((req, res, next)=> {
+app.use(function(req, res, next) {
     // set user
-    req.user = {
-        _id: "6215d791ea6edfac7c5ce5d1",
-        username: "test1"
-    };
+    // req.user = {
+    //     _id: "6215d791ea6edfac7c5ce5d1",
+    //     username: "test1"
+    // };
+
     res.locals.currentUser = req.user;
 
     // Set default Title
@@ -107,6 +122,12 @@ app.use(function(err, req, res, next) {
     req.session.error = err.message;
     res.redirect("back");
 });
+
+app.use(function(req, res, next) {
+    const err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+  });
 
 app.listen(3000, ()=>{
     console.log("Server running on port: http://localhost:" + 3000);

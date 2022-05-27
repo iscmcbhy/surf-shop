@@ -10,7 +10,7 @@
         <textarea name="post[description]" placeholder="Description"><%= post.description %></textarea>
     </div>
     <div>
-        <input name="post[price]" type="text" placeholder="Price" value="<%= post.price %>">
+        <input name="post[price]" type="number" step=".01" placeholder="Price" value="<%= post.price %>">
     </div>
     <div>
         <input type="file" accept="images/*" id="imageUpload" name="images" multiple />

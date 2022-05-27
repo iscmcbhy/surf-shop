@@ -1,24 +1,29 @@
 const express = require('express');
 const router = express.Router();
 const passport = require("passport");
-const { asyncErrorHandler } = require("../middleware");
-const { postRegister, postLogin, getLogout, landingPage } = require("../controllers"); // Deconstructuring multiple lines
+const { asyncErrorHandler, isLoggedIn } = require("../middleware");
+
+const { 
+    postRegister, 
+    getRegister,
+    postLogin, 
+    getLogin,
+    getLogout, 
+    landingPage,
+    
+} = require("../controllers"); // Deconstructuring multiple lines
 
 /* GET home page. */
 router.get('/', asyncErrorHandler(landingPage));
 
 /* GET /register page. */
-router.get("/register", (req, res, next) => {
-    res.send("GET Register");
-});
+router.get("/register", asyncErrorHandler(getRegister));
 
 /* POST /register page. */
 router.post("/register", asyncErrorHandler(postRegister));
 
 /* GET /login page. */
-router.get("/login", (req, res, next) => {
-    res.send("GET Login");
-});
+router.get("/login", getLogin);
 
 /* POST /login page. */
 router.post("/login", asyncErrorHandler(postLogin));
@@ -27,7 +32,7 @@ router.post("/login", asyncErrorHandler(postLogin));
 router.get("/logout", getLogout);
 
 /* GET /profile page. */
-router.get("/profile", (req, res, next) => {
+router.get("/profile", isLoggedIn, (req, res, next) => {
     res.send("GET profile");
 });
 

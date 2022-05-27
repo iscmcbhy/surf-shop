@@ -5,7 +5,7 @@
 
 </div>
 
-<% include ../partials/paginatePosts %> 
+<%- include ("../partials/paginatePosts") %> 
 
 <% posts.docs.forEach((post) => { %>
     <div>
@@ -18,7 +18,7 @@
     </div>
 <% }); %>
 
-<% include ../partials/paginatePosts %> 
+<%- include ("../partials/paginatePosts") %> 
 
 <script>
     mapboxgl.accessToken = "<%= mapBoxToken %>";
