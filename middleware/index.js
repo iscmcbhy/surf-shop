@@ -22,14 +22,14 @@ module.exports = {
         res.redirect('back');
     },
 
-    isLoggedIn: function(req, res, next) {
+    isLoggedIn: (req, res, next) => {
         if(req.isAuthenticated()){
             return next();
         }
 
         req.session.error = 'You are currently logged out!';
 		req.session.redirectTo = req.originalUrl;
-        req.session.save();
+
 		res.redirect('/login');
     },
 
@@ -43,5 +43,51 @@ module.exports = {
 
         req.session.error = "Access Denied!";
         res.redirect('back');
+    },
+
+    isValidPassword: async (req, res, next) => {
+        // Authenticate user
+        // High Order Function
+        const { user } = await User.authenticate()(req.user.username, req.body.currentPassword);
+
+        if(user){
+            // add user to locals 
+            res.locals.user = user;
+            
+            next();
+        } else {
+            req.session.error = "Incorrect Current Password!";
+
+            return res.redirect('/profile');
+        }
+    },
+
+    changePassword: async (req, res, next) => {
+        // Destructuer passwords from form body
+        const {
+            newPassword,
+            confirmPassword
+        } = req.body;
+
+        if(newPassword && confirmPassword){
+            // get user by destructuring res.locals
+            const { user } = res.locals;
+
+            // check if valid
+            if(newPassword === confirmPassword){
+                // set new password
+                await user.setPassword(newPassword);
+
+                next();
+            } else {
+                // flash error
+                req.session.error = "New and Confirm password mismatch!";
+
+                return res.redirect('/profile')
+            }
+
+        } else {
+            next();
+        }
     }
 };

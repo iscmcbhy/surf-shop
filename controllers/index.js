@@ -57,6 +57,7 @@ module.exports = {
     async postLogin(req, res, next) {
         const { username, password } = req.body;
         const { user, error } = await User.authenticate()(username, password);
+        const redirectUrl = req.session.redirectTo || '/';
         
         if(!user && error ) 
             return next(error);
@@ -66,10 +67,7 @@ module.exports = {
                 return next(err);
 
             req.session.success = `Welcome back, ${username}!`;
-            
-            const redirectUrl = req.session.redirectTo || '/';
-            delete req.session.redirectTo;
-            console.log(redirectUrl);
+
             res.redirect(redirectUrl);
         });
     },

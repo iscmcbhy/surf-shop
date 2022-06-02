@@ -1,6 +1,5 @@
-const dotenv = require("dotenv");
-dotenv.config();
-const createError = require('http-errors');
+require("dotenv").config();
+
 const express = require('express');
 const engine = require("ejs-mate");
 const path = require('path');
@@ -20,10 +19,13 @@ const favicon = require('serve-favicon');
 const indexRouter = require('./routes/index');
 const postsRouter = require("./routes/postsRoute");
 const reviewsRouter = require("./routes/reviewsRoute");
+const profileRouter = require('./routes/profileRoute');
 
 const User = require('./models/userModel');
 
 const app = express();
+
+const oneDay = 1000 * 60 * 60 * 24;
 
 // connect to datebase
 // main().catch(err => console.log(err));
@@ -35,13 +37,13 @@ const app = express();
 
 // useCreateIndex is deprecated on my version
 mongoose.connect('mongodb://localhost:27017/surf-shop', {
-  useNewUrlParser: true
+    useNewUrlParser: true
 });
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', () => {
-  console.log('we\'re connected!');
+    console.log('we\'re connected!');
 });
 
 // Engine
@@ -64,10 +66,10 @@ app.use(methodOverride("_method"));
 
 // Sessions
 app.use(session({
-  secret: 'test-secret',
-  resave: false,
-  saveUninitialized: true
-})
+      secret: 'test-secret',
+      resave: false,
+      saveUninitialized: true,
+    })
 );
 
 app.use(passport.initialize());
@@ -105,6 +107,7 @@ app.use(function(req, res, next) {
 app.use('/', indexRouter);
 app.use("/posts", postsRouter);
 app.use("/posts/:id/reviews", reviewsRouter);
+app.use('/profile', profileRouter);
 
 // error handler
 app.use(function(err, req, res, next) {
@@ -119,10 +122,6 @@ app.use(function(err, req, res, next) {
     console.log(err);
     req.session.error = err.message;
     res.redirect("back");
-});
-
-app.listen(3000, ()=>{
-    console.log("Server running on port: http://localhost:" + 3000);
 });
 
 module.exports = app;

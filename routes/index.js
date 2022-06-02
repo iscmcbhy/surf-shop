@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const passport = require("passport");
 const { asyncErrorHandler, isLoggedIn } = require("../middleware");
 
 const { 
@@ -17,7 +16,7 @@ const {
 router.get('/', asyncErrorHandler(landingPage));
 
 /* GET /register page. */
-router.get("/register", asyncErrorHandler(getRegister));
+router.get("/register", getRegister);
 
 /* POST /register page. */
 router.post("/register", asyncErrorHandler(postRegister));
@@ -30,16 +29,6 @@ router.post("/login", asyncErrorHandler(postLogin));
 
 /* GET /logout page. */
 router.get("/logout", getLogout);
-
-/* GET /profile page. */
-router.get("/profile", isLoggedIn, (req, res, next) => {
-    res.send("GET profile");
-});
-
-/* POST /profile page. */
-router.post("/profile", (req, res, next) => {
-    res.send("POST profile");
-});
 
 /* PUT /profile/:user_id page. */
 router.put("/profile/:user_id", (req, res, next) => {

@@ -1,5 +1,5 @@
 
-<ul class="navbar">
+<ul class="navbar" id="navbar">
     <li><a href="/">Home</a></li>
     <li><a href="/posts">Posts</a></li>
 
@@ -7,9 +7,9 @@
         <li><a href="/login">Log-in</a></li>
         <li><a href="/register">Register</a></li>
     <% } else { %>
+        <li><a href="/profile">Profile</a></li>
         <li><a href="/posts/new">New Posts</a></li>
         <li><a href="/logout">Log-out</a></li>
-
         <li>Welcome, <%=currentUser.username %>!</li>
     <% } %> 
 </ul>

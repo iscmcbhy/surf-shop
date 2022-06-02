@@ -27,3 +27,11 @@ a {
   display: inline;
   padding: 5px;
 }
+
+.flash-message-success {
+  color: green;
+}
+
+.flash-message-error {
+  color: red;
+}
