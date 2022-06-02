@@ -74,7 +74,10 @@ module.exports = {
             const { user } = res.locals;
 
             // check if valid
-            if(newPassword === confirmPassword){
+            if(newPassword && !confirmPassword){
+                req.session.error = 'Missing password confirmation!';
+		        return res.redirect('/profile');
+            } else if(newPassword === confirmPassword){
                 // set new password
                 await user.setPassword(newPassword);
 

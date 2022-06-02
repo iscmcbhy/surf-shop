@@ -1,4 +1,4 @@
-const form = document.getElementById('update-profile');
+const updateBtn = document.getElementById('update-btn');
 const newPassword = document.getElementById('new-password');
 const confirmPassword = document.getElementById('confirm-password');
 const validationMessage = document.getElementById('validation-message');
@@ -18,8 +18,10 @@ function confirmPasswordInput(){
 
     if(newPasswordValue !== confirmPasswordValue){
         validatePassword('Password mismatch!', 'flash-message-error', 'flash-message-success');
+        updateBtn.setAttribute("disabled", true);
     } else {
         validatePassword('Password match!', 'flash-message-success', 'flash-message-error');
+        updateBtn.removeAttribute("disabled");
     }
 }
 
@@ -35,7 +37,7 @@ newPassword.addEventListener('input', event=> {
     confirmPasswordInput();
 });
 
-form.addEventListener('submit', event => {
+updateBtn.addEventListener('submit', event => {
 
     if(newPasswordValue !== confirmPasswordValue){
         event.preventDefault();

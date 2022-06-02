@@ -9,7 +9,7 @@
     <a href="/posts/<%= post.id %> "><%= post.title  %></a>
 </div>
 <% }); %>
-<form action="/profile?_method=PUT" method="POST" id="update-profile">
+<form action="/profile?_method=PUT" method="POST">
 <p>Update Info: </p>
     <div>
         <label for="username">Username: </label>
@@ -37,7 +37,7 @@
         <input type="file" id="image" name="image">
     </div>
 
-    <input type="submit">
+    <input type="submit" id="update-btn">
 </form>
 
 <script src="/javascripts/profile-scripts.js"></script>
