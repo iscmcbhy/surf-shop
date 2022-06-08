@@ -1,6 +1,6 @@
 <% layout("layouts/boilerplate.ejs"); -%>
 
-<h1><%= currentUser.username  %>'s Profile </h1>
+<h1><img src="<%= currentUser.image.secure_url %> " alt="<%= currentUser.username %>'s Image Profile" class="profile-image" /><%= currentUser.username  %>'s Profile</h1>
 
 <p>Recent Post</p>
 
@@ -9,7 +9,7 @@
     <a href="/posts/<%= post.id %> "><%= post.title  %></a>
 </div>
 <% }); %>
-<form action="/profile?_method=PUT" method="POST">
+<form action="/profile?_method=PUT" method="POST" enctype="multipart/form-data">
 <p>Update Info: </p>
     <div>
         <label for="username">Username: </label>
@@ -34,6 +34,7 @@
     </div>
     <div>
         <label for="image">Profile Image: </label>
+        <small>(this deletes existing)</small>
         <input type="file" id="image" name="image">
     </div>
 

@@ -1,5 +1,6 @@
 const Post = require('../models/postModel');
 const util = require('util');
+const { cloudinary } = require('../cloudinary');
 
 module.exports = {
     getProfile: async (req, res, next) => {
@@ -23,6 +24,16 @@ module.exports = {
         
         if(email)
             user.email = email;
+
+        if(req.file){
+            if(user.image.public_id){
+                await cloudinary.uploader.destroy(user.image.public_id);
+            }
+
+            const { path, filename } = req.file;
+
+            user.image = { secure_url: path, public_id: filename };
+        }
         
         await user.save();
 
