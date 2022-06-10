@@ -106,8 +106,8 @@ module.exports = {
             }
         ]);
 
-        // const floorRating = post.calculateAverageRating();
-        const floorRating = post.avgRating;
+        const floorRating = post.calculateAverageRating();
+        // const floorRating = post.avgRating;
         
         res.render("posts/show", { post, mapBoxToken, floorRating });
     },
@@ -187,7 +187,7 @@ module.exports = {
         await post.save();
 
         // redirect
-        res.session.success = "Post edited!";
+        req.session.success = "Post edited!";
         res.redirect(`/posts/${post.id}`);
     },
 

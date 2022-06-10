@@ -35,22 +35,24 @@ el.className = 'marker';
 
 // Jquery
 $(".toggle-edit-form").on("click", function() {
-    $(this).text() === "Edit" ? $(this).text("Cancel") : $(this).text("Edit");
-    $(this).siblings().toggle()
+    // toggle the edit button text on click
+	$(this).text() === 'Edit' ? $(this).text('Cancel') : $(this).text('Edit');
+	// toggle visibility of the edit review form
+	$(this).parent().siblings('.edit-review-form-container').toggle();
 });
 
 // make a marker for each feature and add to the map
 new mapboxgl.Marker(el)
-    .setLngLat(post.geometry.coordinates)
-    .addTo(map)
-    .setPopup(
-        new mapboxgl.Popup({ offset: 25 }) // add popups
-        .setHTML(
-            `<h3>${post.title}</h3><p>${post.location}</p>`
-        )
-    );
+            .setLngLat(post.geometry.coordinates)
+            .addTo(map)
+            .setPopup(
+                new mapboxgl.Popup({ offset: 25 }) // add popups
+                .setHTML(
+                    `<h3>${post.title}</h3><p>${post.location}</p>`
+                )
+            );
 
 
 $(".clear-rating").on("click", function(){
-    $("#no-rate-toggle-edit").click();
+    $(this).parent().parent().children('fieldset').children('.input-no-rate').click();
 });

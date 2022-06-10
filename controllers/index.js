@@ -14,9 +14,10 @@ module.exports = {
     // Get /landingPage
     async landingPage(req, res,next){
         // find all post
-        const posts = await Post.find({});
+        const posts = await Post.find({}).sort('-_id').exec();
+        const recentPosts = posts.slice(0, 3);
 
-        res.render("index", { posts, mapboxToken: MAPBOX_TOKEN, title: 'Surf Shop - Home' });
+        res.render("index", { posts, recentPosts, mapboxToken: MAPBOX_TOKEN, title: 'Surf Shop - Home' });
     },
 
     // Get / Register

@@ -1,34 +1,33 @@
-<% layout("layouts/boilerplate.ejs"); -%>
-<h1>Posts Index</h1>
-
-<div class="container-fluid">
-    <div class="row">
-        
-        <div class="col-4">
-            <%- include ("../partials/search-filter") %> 
-        </div>
-
-        <div class="col-8">
+<% layout("layouts/post-index.ejs"); -%>
+<%- include('../partials/flash-messages.ejs') %> 
+<div class="container-fluid px-4 py-3 px-lg-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
             <div id="map"></div>
         </div>
+    </div>
 
+    <div class="col-md-8">
+        <%- include ("../partials/search-filter") %>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <%- include ("../partials/paginatePosts") %>
+            <% posts.docs.forEach(function(post) { %>
+                <div class="post-item my-3">
+                    <h4><%= post.title %></h4>
+                    <p class="mb-1">Price: <%= post.price %></p>
+                    <p class="mb-1"><%= post.description %></p>
+                    <p class="mb-1"><%= post.location %></p>
+                    <p class="mb-1"><a href="/posts/<%= post.id %>">View more</a></p>
+                </div>
+                <hr>
+            <% }); %>
+            <%- include ("../partials/paginatePosts") %>
+        </div>
     </div>
 </div>
-
-<%- include ("../partials/paginatePosts") %> 
-
-<% posts.docs.forEach((post) => { %>
-    <div>
-        <h3>Title: <%= post.title %></h3>
-        <div>Author: <%= post.author === null ? "" : post.author.username %></div>
-        <div>Description: <%= post.description %></div>
-        <div>Price: <%= post.price %></div>
-        <div>Location: <%= post.location %></div>
-        <div><a href="/posts/<%= post.id %>">View More</a></div>
-    </div>
-<% }); %>
-
-<%- include ("../partials/paginatePosts") %> 
 
 <script>
     mapboxgl.accessToken = "<%= mapBoxToken %>";

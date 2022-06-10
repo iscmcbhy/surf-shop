@@ -10,6 +10,7 @@ const session = require("express-session");
 const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 const favicon = require('serve-favicon');
+const moment = require('moment');
 
 // const { seedPosts } = require("./seed");
 
@@ -63,6 +64,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(methodOverride("_method"));
+
+// add moment to view 
+app.locals.moment = moment;
 
 // Sessions
 app.use(session({
