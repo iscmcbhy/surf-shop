@@ -17,7 +17,7 @@ const multer = require("multer");
 
 const upload = multer({storage: storage});
 
-const { asyncErrorHandler, isLoggedIn, isPostAuthor } = require("../middleware");
+const { asyncErrorHandler, isLoggedIn, isPostAuthor, searchAndFilterPosts } = require("../middleware");
 const { 
     postIndex, 
     postNew,
@@ -29,7 +29,7 @@ const {
 } = require("../controllers/postsController");
 
 /* GET posts index /posts */
-router.get('/', asyncErrorHandler(postIndex));
+router.get('/', asyncErrorHandler(searchAndFilterPosts), asyncErrorHandler(postIndex));
 
 /* GET posts new /posts/new */
 router.get('/new', isLoggedIn, postNew);

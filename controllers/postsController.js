@@ -17,7 +17,10 @@ const geocodingClient = mapboxGeocoding({ accessToken: mapBoxToken });
 module.exports = {
     async postIndex(req, res, next){
         // Modified from .find to .paginate
-        let posts = await Post.paginate({}, {
+        const { dbQuery } = res.locals;
+        delete res.locals.dbQuery;
+
+        let posts = await Post.paginate(dbQuery, {
             populate: {
                 path: "author",
                 model: "User"
@@ -27,6 +30,10 @@ module.exports = {
             //  or sort: '-_id'
             sort: {'_id': -1}
         });
+
+        if(!posts.docs.length && res.locals.query){
+            res.locals.error = "No results found on that query!";
+        }
 
         res.render("posts/index", { posts, mapBoxToken, title: "Surf Shop - Posts" });
     },
@@ -99,7 +106,8 @@ module.exports = {
             }
         ]);
 
-        const floorRating = post.calculateAverageRating();
+        // const floorRating = post.calculateAverageRating();
+        const floorRating = post.avgRating;
         
         res.render("posts/show", { post, mapBoxToken, floorRating });
     },

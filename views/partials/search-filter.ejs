@@ -1,0 +1,77 @@
+<form action="/posts" method="GET">
+    <fieldset>
+        <legend>Search</legend>
+        <label for="search"></label>
+        <input type="text" name="search" id="search" placeholder="Search.." value="<%= query.search %>">
+    </fieldset>
+
+    <fieldset>
+        <label for="location">Location</label>
+        <input type="text" name="location" id="location" placeholder="Address or Zipcode" value="<%= query.location %>">
+        <small><a href="#" id="use-my-location">Use my location.</a></small>
+        <br>
+        <p id="status"></p>
+        
+        <legend>Distance (miles)</legend>
+        <div>
+            <input type="radio" name="distance" id="distance25" value="25" <%= query.distance === '25' ? "checked" : ""  %> >
+            <label for="distance25">25</label>
+        </div>
+
+        <div>
+            <input type="radio" name="distance" id="distance50" value="50" <%= query.distance === '50' ? "checked" : ""  %> >
+            <label for="distance50">50</label>
+        </div>
+
+        <div>
+            <input type="radio" name="distance" id="distance100" value="100" <%= query.distance === '100' ? "checked" : ""  %> >
+            <label for="distance100">100</label>
+        </div>
+
+        <div>
+            <a href="#" id="clear-distance">Clear</a>
+        </div>
+
+    </fieldset>
+
+    <fieldset>
+
+        <legend>Price</legend>
+        <label for="min">Min</label>
+		<input type="number" id="min" name="price[min]" min="0" max="10000" step="1" placeholder="Min" value="<%= query.price ? query.price.min : '' %>">
+
+		<label for="max">Max</label>
+		<input type="number" id="max" name="price[max]" min="0" max="10000" step="1" step="1" placeholder="Max" value="<%= query.price ? query.price.max : '' %>">
+
+    </fieldset>
+
+    <fieldset>
+        <legend>Rating</legend>
+
+        <input type="checkbox" id="zero-star" name="avgRating[]" value="0" <%= query.avgRating && query.avgRating.includes('0') ? "checked"  : "" %>  />
+        <label for="zero-star">0 Stars</label>
+        
+        <input type="checkbox" id="one-star" name="avgRating[]" value="1" <%= query.avgRating && query.avgRating.includes('1') ? "checked"  : "" %>  />
+        <label for="one-star">1 Star</label>
+        
+        <input type="checkbox" id="two-star" name="avgRating[]" value="2" <%= query.avgRating && query.avgRating.includes('2') ? "checked"  : "" %>  />
+        <label for="two-star">2 Stars</label>
+        
+        <input type="checkbox" id="three-star" name="avgRating[]" value="3" <%= query.avgRating && query.avgRating.includes('3') ? "checked"  : "" %>  />
+        <label for="three-star">3 Stars</label>
+        
+        <input type="checkbox" id="four-star" name="avgRating[]" value="4" <%= query.avgRating && query.avgRating.includes('4') ? "checked"  : "" %>  />
+        <label for="four-star">4 Stars</label>
+
+        <input type="checkbox" id="five-star" name="avgRating[]" value="5" <%= query.avgRating && query.avgRating.includes('5') ? "checked"  : "" %>  />
+        <label for="five-star">5 Stars</label>
+    </fieldset>
+
+    <div>
+        <a href="/posts">Reset form</a>
+    </div>
+
+    <input type="submit" value="Submit" />
+</form>
+
+<script src="/javascripts/use-my-location.js"></script>

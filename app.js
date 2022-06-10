@@ -13,7 +13,7 @@ const favicon = require('serve-favicon');
 
 // const { seedPosts } = require("./seed");
 
-// seedPosts();
+// seedPosts().catch(err => console.log(err));
 
 // Require Routes
 const indexRouter = require('./routes/index');
